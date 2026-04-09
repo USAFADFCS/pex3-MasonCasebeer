@@ -46,7 +46,7 @@ PageQueue *pqInit(unsigned int maxSize);
  *       causes size to exceed maxSize, the head (LRU) page
  *       is evicted.
  */
-long pqAccess(PageQueue *pq, unsigned long pageNum);
+long pqAccess(PageQueue *pq, unsigned int pageNum);
 
 /**
  * @brief Free all nodes in the queue and reset it to empty

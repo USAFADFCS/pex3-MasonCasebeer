@@ -16,6 +16,37 @@
 #define PROGRESS_INTERVAL 100000  // print status every N accesses
 
 int main(int argc, char **argv) {
+
+    int testing = 0;
+    if (testing == 1) {
+        PageQueue* pq = pqInit(5);
+        int size = 5;
+        //3 1 4 1 5 9 2 6 5 3
+    
+        long* faults = calloc(7 + 1, sizeof(long));
+        int accesses[] = { 8, 3, 6, 8, 9, 3 };
+        int numAccesses = sizeof(accesses) / sizeof(accesses[0]);
+        for(int i = 0; i < numAccesses; i++) {
+            long depth = pqAccess(pq, accesses[i]);
+            pqPrint(pq);
+            if(depth == -1) {
+                for (int i = 1; i <= size; i++) {
+                    faults[i]++;
+                }
+            } else{
+                for (int i =1; i <= depth; i++) {
+                    faults[i]++;
+                }
+            }       
+        }
+        for (int frameCount = 1; frameCount <= 5; frameCount++) {
+            long faultCount = faults[frameCount];
+            double faultRate = (double)faultCount / (double)numAccesses;
+              printf("%d,%ld,%f\n", frameCount, faultCount, faultRate);
+        }
+        free(pq);
+        return 1;
+    }
     FILE *ifp = NULL;
     unsigned long numAccesses = 0;
     p2AddrTr traceRecord;
@@ -71,6 +102,9 @@ int main(int argc, char **argv) {
     //       and allocate the faults[] array.  faults[f] will hold the
     //       total number of page faults that occur when f frames are
     //       available.  Use calloc so all entries start at zero.
+    PageQueue* pq = pqInit(maxFrames);
+    long* faults = calloc(maxFrames + 1, sizeof(long));
+    // int zero_fault = 0;
 
     // Process each memory access from the trace file
     while (!feof(ifp)) {
@@ -87,6 +121,22 @@ int main(int argc, char **argv) {
         }
 
         // TODO: Call pqAccess() to simulate this memory reference.
+        long depth = pqAccess(pq, pageNum);
+        // pqPrint(pq);
+        if(depth == -1) {
+            for (int i = 1; i <= maxFrames; i++) {
+                faults[i]++;
+            }
+            // zero_fault ++;
+        } 
+        else{
+            for (int i =1; i <= depth; i++) {
+                faults[i]++;
+            }
+            // zero_fault;
+        }
+
+        
         //       It returns:
         //         -1      -> page was NOT in the queue (fault for ALL frame counts)
         //         d >= 0  -> page was at depth d from the MRU end
@@ -100,14 +150,25 @@ int main(int argc, char **argv) {
 
     // Output CSV results to stdout (redirect with > to create a .csv file)
     printf("Total Accesses:,%lu\n", numAccesses);
-    printf("Frames,Missees,Miss Rate\n");
+    printf("Frames,Misses,Miss Rate\n");
 
     // TODO: Loop from frame count 1 to maxFrames and print each row:
     //       printf("%d,%lu,%f\n", frameCount, faults[frameCount],
     //              (double)faults[frameCount] / (double)numAccesses);
+    for (int frameCount = 1; frameCount <= maxFrames; frameCount++) {
+        // printf("%d\n",frameCount);
+        long faultCount = faults[frameCount];
+        double faultRate = (double)faultCount / (double)numAccesses;
+
+        printf("%d,%lu,%f\n", frameCount, faultCount, faultRate);
+    }
+
 
     // TODO: Free your PageQueue and the faults[] array,
     //       then close the file.
+    fclose(ifp);
+    pqFree(pq);
+    free(faults);
 
     return 0;
 }
