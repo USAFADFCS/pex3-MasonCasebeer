@@ -22,9 +22,9 @@ PageQueue *pqInit(unsigned int maxSize) {
     p->tail = NULL;
     p->size = 0;
     p->maxSize = maxSize;
+    return p;
     // TODO: malloc a PageQueue, set head and tail to NULL,
     //       size to 0, maxSize to maxSize, and return the pointer
-    return p;
 }
 
 /**
@@ -41,6 +41,7 @@ long pqAccess(PageQueue *pq, unsigned int pageNum) {
         if(cur_node->pageNum == pageNum) {
             //if already tail do nothing 
             if(pq->tail == cur_node) {
+                //should return depth 0 since it's the most recently used
                 return depth;
             }
             //otherwise move to tail 
@@ -52,15 +53,14 @@ long pqAccess(PageQueue *pq, unsigned int pageNum) {
             }
 
         }
-        cur_node = cur_node->prev;
         depth++;
+        cur_node = cur_node->prev;
     }
 
     if(pq->size >= pq->maxSize) {
         deleteElementLinkedList(pq, 0);
     }
     insertElementLinkedList(pq, pq->size, pageNum);
-
     return -1;
 
     // HIT path (page found at depth d):
@@ -80,9 +80,9 @@ long pqAccess(PageQueue *pq, unsigned int pageNum) {
 void pqFree(PageQueue *pq) {
     PqNode *p = pq->head;
     while(p) {
-        PqNode *temp = p;
-        free(temp);
-        p = p->next;
+        PqNode *next = p->next;
+        free(p);
+        p = next;
     }
     free(pq);
     // TODO:; Walk from head to tail, free each node, then free

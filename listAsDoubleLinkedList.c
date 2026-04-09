@@ -66,6 +66,7 @@ void deleteElementLinkedList(PageQueue* list, int position) {
     }
     //no elements
     if(list->size == 1) {
+        free(list->head);
         list-> head = NULL;
         list-> tail = NULL;
         list-> size --;
@@ -107,6 +108,8 @@ void deleteElementLinkedList(PageQueue* list, int position) {
 void insertElementLinkedList(PageQueue* list, int position, long element) {
     PqNode* new = (PqNode*) malloc(sizeof(PqNode));
     new ->pageNum = element;
+    new->next = NULL;
+    new->prev = NULL;
     //if empty
     if(list->size == 0) {
         list->head = new;
@@ -140,6 +143,7 @@ void insertElementLinkedList(PageQueue* list, int position, long element) {
     new->next->prev = new;
     before->next = new;
     list->size ++; 
+    return;
 }
 
 void appendElementLinkedList(PageQueue* list, int element) {
