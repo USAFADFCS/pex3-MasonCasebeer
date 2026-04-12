@@ -1,7 +1,7 @@
 /** pagequeue.c
  * ===========================================================
- * Name: Mason Casebeer, Apr 8 2026
- * Section: CS483 / M4
+ * Name: Mason Casebeer, Apr 12 2026
+ * Section: CS483 / M4A
  * Project: PEX3 - Page Replacement Simulator
  * Purpose: Implementation of the PageQueue ADT — a doubly-linked
  *          list for LRU page replacement.
@@ -48,6 +48,7 @@ long pqAccess(PageQueue *pq, unsigned int pageNum) {
             else {
                 //were going backwards so we need to calc depth from head
                 deleteElementLinkedList(pq, pq->size - depth - 1);
+                //insert at tail
                 insertElementLinkedList(pq, pq->size, pageNum);
                 return depth;
             }

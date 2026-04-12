@@ -1,7 +1,7 @@
 /** 
  * ================================================================
  * Name: Mason Casebeer
- * Section: M6
+ * Section: M4A
  * Project: Implementation of Double-Linked List Library
  * =================================================================
  */

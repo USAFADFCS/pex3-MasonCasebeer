@@ -1,12 +1,13 @@
 /** main.c
  * ===========================================================
- * Name: _______________________, __ ___ 2026
- * Section: CS483 / ____
+ * Name: Mason Casebeer, Apr 12 2026
+ * Section: CS483 / M4A 
  * Project: PEX3 - Page Replacement Simulator
  * Purpose: Reads a BYU binary memory trace file and simulates
  *          LRU page replacement to measure fault rates across
  *          varying frame allocations.
- * Documentation: TBD
+ * Documentation: Consulted Prof. Weingart for help with my code, he gave me 
+ *the autograder summary which pointed out several edge case errors in my DLL implementation which I then fixed.
  * =========================================================== */
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,11 +20,11 @@ int main(int argc, char **argv) {
 
     int testing = 0;
     if (testing == 1) {
-        int size = 4;
+        int size = 3;
         PageQueue* pq = pqInit(size);
 
         long* faults = calloc(size + 1, sizeof(long));
-        int accesses[] = {1,2,3,4,1,2,3,4,1,2,3,4};
+        int accesses[] = {2, 5, 1, 2, 7, 5, 2, 1, 7, 5};
         int numAccesses = sizeof(accesses) / sizeof(accesses[0]);
         for(int i = 0; i < numAccesses; i++) {
             long depth = pqAccess(pq, accesses[i]);
@@ -49,6 +50,7 @@ int main(int argc, char **argv) {
     }
     FILE *ifp = NULL;
     unsigned long numAccesses = 0;
+    int numzero = 0;
     p2AddrTr traceRecord;
 
     // Validate command-line arguments: trace_file frame_size
@@ -105,6 +107,7 @@ int main(int argc, char **argv) {
     PageQueue* pq = pqInit(maxFrames);
     long* faults = calloc(maxFrames+1, sizeof(long));
     long num = 0;
+    long num_one = 0;
     // Process each memory access from the trace file
     while (!feof(ifp)) {
         fread(&traceRecord, sizeof(p2AddrTr), 1, ifp);
@@ -126,11 +129,15 @@ int main(int argc, char **argv) {
             for (int i = 1; i <= maxFrames; i++) {
                 faults[i]++;
             }
+            num_one++;
             num++;
         } 
         else{
             for (int i =1; i <= depth; i++) {
                 faults[i]++;
+                if(i == 1) {
+                    num_one++;
+                }
             }
             num++;
         }
@@ -152,6 +159,8 @@ int main(int argc, char **argv) {
     // TODO: Loop from frame count 1 to maxFrames and print each row:
     //       printf("%d,%lu,%f\n", frameCount, faults[frameCount],
     //              (double)faults[frameCount] / (double)numAccesses);
+
+    // printf("|%d %d|",num_one, num);
     for (int frameCount = 1; frameCount <= maxFrames; frameCount++) {
           printf("%d,%lu,%f\n", frameCount, faults[frameCount],
                  (double)faults[frameCount] / (double)numAccesses);

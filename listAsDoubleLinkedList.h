@@ -1,7 +1,7 @@
 /** 
  * ================================================================
- * Name: 
- * Section: 
+ * Name: Mason Casebeer
+ * Section: M4A
  * Project: Header for Double-Linked List Library
  *
  * Instructions:  Complete the implementation file for this header file
